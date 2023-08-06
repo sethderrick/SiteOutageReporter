@@ -1,0 +1,26 @@
+{
+  "devDependencies": {
+    "@types/node": "^20.4.8"
+  },
+  "name": "KrakenBackendTestApp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sethderrick/KrakenBackendTestApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sethderrick/KrakenBackendTestApp/issues"
+  },
+  "homepage": "https://github.com/sethderrick/KrakenBackendTestApp#readme",
+  "description": ""
+}
