@@ -1,14 +1,14 @@
-import { tryRequest, get } from "./app";
+import { tryRequest, get, post } from "./app";
 import { AxiosError } from "axios";
 import axios from "axios";
 
 // Mocking Axios module
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+const BASE_URL = 'https://api.krakenflex.systems/interview-tests-mock-api/v1/';
+const API_KEY = process.env.API_KEY; 
 
 describe('get', () => {
-    const BASE_URL = 'https://api.krakenflex.systems/interview-tests-mock-api/v1/';
-    const API_KEY = process.env.API_KEY; 
 
     beforeEach(() => {
         mockedAxios.get.mockReset();
@@ -34,6 +34,35 @@ describe('get', () => {
         mockedAxios.get.mockRejectedValueOnce(new Error('Failed request'));
 
         await expect(get(endpoint)).rejects.toThrow('Failed request');
+    });
+});
+
+describe('post', () => {
+    const endpoint = '/data';
+    const postData = { key: 'value' };
+
+    beforeEach(() => {
+        mockedAxios.get.mockReset();
+    });
+
+    it('invokes tryRequest with correct axios POST request and data', async () => {
+        const responseData = { message: 'Post Success' };
+        mockedAxios.post.mockResolvedValueOnce({ data: responseData });
+
+        const result = await post(endpoint, postData);
+        expect(result).toEqual(responseData);
+
+        expect(mockedAxios.post).toHaveBeenCalledWith(`${BASE_URL}${endpoint}`, postData, {
+            headers: {
+                'x-api-key': API_KEY,
+            },
+        });
+    });
+
+    it('properly handles errors from tryRequest', async () => {
+        mockedAxios.post.mockRejectedValueOnce(new Error('Failed post request'));
+
+        await expect(post(endpoint, postData)).rejects.toThrow('Failed post request');
     });
 });
 
