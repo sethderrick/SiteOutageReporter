@@ -80,6 +80,10 @@ To run the tests, simply execute the following command:
 npm test
 ```
 
+### Contributing changes to this repo
+
+As well as the usual Git commits and pushes and pull requests after changes to this repo, don't forget that TypeScript needs to be transpiled to JavaScript. Any changes made to the *.ts files will require re-running the tsc command on that file to generate a new .js file that includes the changes.
+
 ### Built with
 
 - [TypeScript](https://www.typescriptlang.org/) - the primary language for the application
