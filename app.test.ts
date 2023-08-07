@@ -1,6 +1,5 @@
 import { tryRequest, get, post } from "./app";
-import { AxiosError } from "axios";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 // Mocking Axios module
 jest.mock("axios");
