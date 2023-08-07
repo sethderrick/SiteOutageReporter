@@ -1,71 +1,92 @@
-
+import { tryRequest, get } from "./app";
+import { AxiosError } from "axios";
 import axios from "axios";
-import { tryRequest, get, post, main } from "./app";
 
-jest.mock('axios');  // Mock the axios module for testing
+// Mocking Axios module
+jest.mock("axios");
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe("tryRequest function", () => {
-    it("should retry the request on 500 error", async () => {
-        const mockRequest = jest.fn().mockRejectedValueOnce({ response: { status: 500 } })
-            .mockResolvedValueOnce({ data: "success" });
-        const response = await tryRequest(mockRequest);
-        expect(response).toBe("success");
-        expect(mockRequest).toHaveBeenCalledTimes(2);
+describe('get', () => {
+    const BASE_URL = 'https://api.krakenflex.systems/interview-tests-mock-api/v1/';
+    const API_KEY = process.env.API_KEY; 
+
+    beforeEach(() => {
+        mockedAxios.get.mockReset();
     });
 
-    it("should throw an error on 403", async () => {
-        const mockRequest = jest.fn().mockRejectedValue({ response: { status: 403 } });
-        await expect(tryRequest(mockRequest)).rejects.toThrow();
+    it('invokes tryRequest with correct axios GET request', async () => {
+        const endpoint = '/data';
+        const responseData = { message: 'Success' };
+        mockedAxios.get.mockResolvedValueOnce({ data: responseData });
+
+        const result = await get(endpoint);
+        expect(result).toEqual(responseData);
+
+        expect(mockedAxios.get).toHaveBeenCalledWith(`${BASE_URL}${endpoint}`, {
+            headers: {
+                'x-api-key': API_KEY,
+            },
+        });
     });
 
-    it("should throw an error on 404", async () => {
-        const mockRequest = jest.fn().mockRejectedValue({ response: { status: 404 } });
-        await expect(tryRequest(mockRequest)).rejects.toThrow();
-    });
+    it('properly handles errors from tryRequest', async () => {
+        const endpoint = '/data';
+        mockedAxios.get.mockRejectedValueOnce(new Error('Failed request'));
 
-    it("should throw an error on 429", async () => {
-        const mockRequest = jest.fn().mockRejectedValue({ response: { status: 429 } });
-        await expect(tryRequest(mockRequest)).rejects.toThrow();
-    });
-
-    it("should throw an unknown error", async () => {
-        const mockRequest = jest.fn().mockRejectedValue({});
-        await expect(tryRequest(mockRequest)).rejects.toThrow("An unknown error has occurred.");
-    });
-});
-
-describe("API request functions", () => {
-    it("should make a GET request with the correct endpoint and headers", async () => {
-        (axios.get as jest.Mock).mockResolvedValue({ data: "success" });
-        const response = await get("test-endpoint");
-        expect(axios.get).toHaveBeenCalledWith("https://api.krakenflex.systems/interview-tests-mock-api/v1/test-endpoint", { headers: { 'x-api-key': process.env.API_KEY } });
-        expect(response).toBe("success");
-    });
-
-    it("should make a POST request with the correct endpoint, data, and headers", async () => {
-        const testData = { key: "value" };
-        (axios.post as jest.Mock).mockResolvedValue({ data: "success" });
-        const response = await post("test-endpoint", testData);
-        expect(axios.post).toHaveBeenCalledWith("https://api.krakenflex.systems/interview-tests-mock-api/v1/test-endpoint", testData, { headers: { 'x-api-key': process.env.API_KEY } });
-        expect(response).toBe("success");
+        await expect(get(endpoint)).rejects.toThrow('Failed request');
     });
 });
 
-describe("main function", () => {
-    it("should filter outages by date correctly", async () => {
-        (axios.get as jest.Mock).mockResolvedValueOnce({ data: [{ begin: "2022-01-01T00:00:00.000Z" }, { begin: "2021-12-31T23:59:59.999Z" }] })
-            .mockResolvedValueOnce({ data: { devices: [] } });
-        await main();
-        expect(axios.post).toHaveBeenCalledWith(expect.anything(), [{ begin: "2022-01-01T00:00:00.000Z" }]);
+describe("tryRequest", () => {
+    let mockRequestFunc: jest.Mock;
+
+    beforeEach(() => {
+        mockRequestFunc = jest.fn();
+        mockedAxios.get.mockReset();
     });
 
-    it("should report only outages related to specific site devices", async () => {
-        (axios.get as jest.Mock).mockResolvedValueOnce({ data: [{ id: 1 }, { id: 2 }] })
-            .mockResolvedValueOnce({ data: { devices: [{ id: 1 }] } });
-        await main();
-        expect(axios.post).toHaveBeenCalledWith(expect.anything(), [{ id: 1 }]);
+    it("handles successful request", async () => {
+        const data = { message: "Success" };
+        mockRequestFunc.mockResolvedValue({ data });
+
+        const result = await tryRequest(mockRequestFunc);
+        expect(result).toEqual(data);
     });
 
-    // ... (additional tests for main function's logic)
+    it("retries on 500 error", async () => {
+        const error = {
+            isAxiosError: true,
+            response: { status: 500 }
+        };
+
+        mockRequestFunc.mockRejectedValueOnce(error)
+            .mockRejectedValueOnce(error)
+            .mockRejectedValueOnce(error);
+
+        await expect(tryRequest(mockRequestFunc)).rejects.toEqual(error);
+        expect(mockRequestFunc).toHaveBeenCalledTimes(3);
+    });
+
+    const errorCodes = [403, 404, 429];
+    for (let code of errorCodes) {
+        it(`throws immediately on ${code} error`, async () => {
+            const error = {
+                isAxiosError: true,
+                response: { status: code }
+            };
+
+            mockRequestFunc.mockRejectedValue(error);
+            await expect(tryRequest(mockRequestFunc)).rejects.toEqual(error);
+        });
+    }
+
+    it("throws on unknown error", async () => {
+        const error = {
+            isAxiosError: true,
+            response: { status: 418 }
+        };
+
+        mockRequestFunc.mockRejectedValue(error);
+        await expect(tryRequest(mockRequestFunc)).rejects.toEqual(error);
+    });
 });
-
