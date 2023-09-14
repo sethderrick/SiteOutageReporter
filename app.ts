@@ -1,8 +1,8 @@
-import axios, { AxiosError } from "axios";
 require('dotenv').config();
-
-const BASE_URL = "https://api.krakenflex.systems/interview-tests-mock-api/v1/";
-const API_KEY = process.env.API_KEY; // Pull API key from environment variables
+import axios, { AxiosError } from "axios";
+import { BASE_URL, API_KEY } from "./config";
+import { tryRequest } from "./utils";
+import { get, post } from "./api";
 
 // Function to implement retry mechanism
 // NOTE: If necessary to meet more explicit requirements, this function could be replaced with a more 
