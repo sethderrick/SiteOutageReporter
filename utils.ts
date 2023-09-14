@@ -1,5 +1,6 @@
-// Utility functions for the application
-
+// Function to implement retry mechanism
+// NOTE: If necessary to meet more explicit requirements, this function could be replaced with a more 
+//  elegant exponential backoff algorithm or a circuit breaker algorithm. 
 export async function tryRequest(requestFunc: () => Promise<any>, retries = 3): Promise<any> {
     while (retries > 0) {
         try {
