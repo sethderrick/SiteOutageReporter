@@ -1,4 +1,6 @@
-// API-related functions for the application
+import { tryRequest } from "./utils";
+import axios, { AxiosError } from "axios";
+import { BASE_URL, API_KEY } from "./config";
 
 export async function get(endpoint: string) {
     return tryRequest(() => axios.get(`${BASE_URL}${endpoint}`, {
