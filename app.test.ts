@@ -1,11 +1,11 @@
-import { tryRequest, get, post } from "./app";
+import { tryRequest, get, post } from "./src/app";
 import axios, { AxiosError } from "axios";
 
 // Mocking Axios module
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 const BASE_URL = 'https://api.krakenflex.systems/interview-tests-mock-api/v1/';
-const API_KEY = process.env.API_KEY; 
+const API_KEY = process.env.API_KEY;
 
 describe('get', () => {
 
