@@ -1,10 +1,18 @@
 import { tryRequest } from "./utils";
 import { get, post } from "./api";
+import { Outage } from './Outage';
+import { Device } from './Device';
+
+interface SiteInfo {
+    id: string;         // Unique identifier for the site
+    name?: string;      // Optional name of the site
+    devices: Device[];  // List of associated devices
+}
 
 export async function main() {
     try {
-        const outages = await get("outages");
-        const siteInfo = await get(`site-info/norwich-pear-tree`);
+        const outages: Outage[] = await get("outages");
+        const siteInfo: SiteInfo = await get(`site-info/norwich-pear-tree`);
 
         const filteredOutages = outages
             .filter((o: any) => new Date(o.begin) >= new Date("2022-01-01T00:00:00.000Z"));
