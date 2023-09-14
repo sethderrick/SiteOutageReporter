@@ -1,7 +1,7 @@
-import { tryRequest } from "./utils";
-import { get, post } from "./api";
-import { Outage } from './Outage';
-import { Device } from './Device';
+import { tryRequest } from "./utils/utils";
+import { get, post } from "./api/api";
+import { Outage } from './src/models/Outage';
+import { Device } from './src/models/Device';
 
 interface SiteInfo {
     id: string;         // Unique identifier for the site

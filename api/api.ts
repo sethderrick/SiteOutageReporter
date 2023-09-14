@@ -1,6 +1,6 @@
-import { tryRequest } from "./utils";
+import { tryRequest } from "../utils/utils";
 import axios, { AxiosError } from "axios";
-import { BASE_URL, API_KEY } from "./config";
+import { BASE_URL, API_KEY } from "../config/config";
 
 export async function get(endpoint: string) {
     return tryRequest(() => axios.get(`${BASE_URL}${endpoint}`, {
