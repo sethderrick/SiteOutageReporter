@@ -4,23 +4,6 @@ import { BASE_URL, API_KEY } from "./config";
 import { tryRequest } from "./utils";
 import { get, post } from "./api";
 
-
-export async function get(endpoint: string) {
-    return tryRequest(() => axios.get(`${BASE_URL}${endpoint}`, {
-        headers: {
-            'x-api-key': API_KEY,
-        },
-    }));
-}
-
-export async function post(endpoint: string, data: any) {
-    return tryRequest(() => axios.post(`${BASE_URL}${endpoint}`, data, {
-        headers: {
-            'x-api-key': API_KEY,
-        },
-    }));
-}
-
 export async function main() {
     try {
         const outages = await get("outages");
