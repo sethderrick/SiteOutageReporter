@@ -83,8 +83,6 @@ Did they solve the problem?
     - No. He mostly tested his utility function and not the actual business logic.
 - Integration tests?
     - No.
-- Good documentation for running and testing
-    - No. included typescript in the dev dependencies but also wanted us to install it globally.
 - Does it run as per their instructions?
     - No. I had to tweak the `tsconfig.json` file.
 - Type safety where appropriate?
