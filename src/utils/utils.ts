@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import logger from "./logger";  // Winston logger
 
 // Function to implement retry mechanism
 // NOTE: If necessary to meet more explicit requirements, this function could be replaced with a more 

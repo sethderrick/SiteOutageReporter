@@ -2,6 +2,7 @@ import { tryRequest } from "./utils/utils";
 import { get, post } from "./api/api";
 import { Outage } from './models/Outage';
 import { Device } from './models/Device';
+import logger from "./utils/logger"; // Winston logger
 
 interface SiteInfo {
     id: string;         // Unique identifier for the site

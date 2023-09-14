@@ -1,7 +1,7 @@
 import { tryRequest } from "../utils/utils";
 import axios, { AxiosError } from "axios";
 import { BASE_URL, API_KEY } from "../config/config";
-import logger from "../utils/logger";
+import logger from "../utils/logger"; // Winston logger
 
 export async function get(endpoint: string) {
     return tryRequest(() => axios.get(`${BASE_URL}${endpoint}`, {
