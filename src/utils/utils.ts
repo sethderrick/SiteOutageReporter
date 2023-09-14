@@ -8,6 +8,7 @@ export async function tryRequest(requestFunc: () => Promise<any>, retries = 3): 
     while (retries > 0) {
         try {
             const response = await requestFunc();
+            logger.log('info', `Request successful.`)
             return response.data;
         } catch (error) {
             const axiosError = error as AxiosError;
@@ -15,16 +16,16 @@ export async function tryRequest(requestFunc: () => Promise<any>, retries = 3): 
                 retries -= 1;
                 if (retries === 0) throw error;
             } else if (axiosError.response && axiosError.response.status === 403) {
-                console.log("You do not have the required permissions to make this request.");
+                logger.error(`You do not have the required permissions to make this request.`);
                 throw error;
             } else if (axiosError.response && axiosError.response.status === 404) {
-                console.log("You have requested a resource that does not exist.");
+                logger.error(`You have requested a resource that does not exist.`);
                 throw error;
             } else if (axiosError.response && axiosError.response.status === 429) {
-                console.log("You've exceeded your limit for your API key.");
+                logger.error(`You've exceeded your limit for your API key.`);
                 throw error;
             } else {
-                console.log("An unknown error has occurred.");
+                logger.error(`An unknown error has occurred.`);
                 throw error;
             }
         }

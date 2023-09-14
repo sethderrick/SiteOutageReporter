@@ -15,7 +15,7 @@ async function fetchOutages(): Promise<Outage[]> {
     try {
         return await tryRequest(() => get("outages"));
     } catch (error) {
-        console.error("Error fetching outages:", error);
+        logger.error(`Error fetching outages: ${error}`);
         throw error;
     }
 }
@@ -24,7 +24,7 @@ async function fetchSiteInfo(): Promise<SiteInfo> {
     try {
         return await tryRequest(() => get("site-info/norwich-pear-tree"));
     } catch (error) {
-        console.error("Error fetching site info:", error);
+        logger.error(`Error fetching site info: ${error}`);
         throw error;
     }
 }
@@ -46,7 +46,7 @@ export async function main() {
 
         const postResult = await post("site-outages/norwich-pear-tree", outagesToReport);
     } catch (error) {
-        console.error("An error occurred in main function:", error);
+        logger.error(`An error occurred in main function: ${error}`);
     }
 }
 
