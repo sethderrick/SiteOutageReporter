@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 -   Testing: Install Jest by running the following command:
 
     ```bash
-    npm install --save-dev jest ts-jest @types/jest
+    npm install --save-dev jest ts-jest jest-mock @types/jest
     ```
 
 ### Installing
