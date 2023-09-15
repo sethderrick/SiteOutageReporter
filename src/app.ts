@@ -20,19 +20,19 @@ async function fetchOutages(): Promise<Outage[]> {
     }
 }
 
-async function fetchSiteInfo(): Promise<SiteInfo> {
+async function fetchSiteInfo(siteName: string): Promise<SiteInfo> {
     try {
-        return await tryRequest(() => get("site-info/norwich-pear-tree"));
+        return await tryRequest(() => get(`site-info/${siteName}`));
     } catch (error) {
         logger.error(`Error fetching site info: ${error}`);
         throw error;
     }
 }
 
-export async function main() {
+export async function main(siteName: string) {
     try {
         // Start both get requests simultaneously with individual error handling
-        const [outages, siteInfo] = await Promise.all([fetchOutages(), fetchSiteInfo()]);
+        const [outages, siteInfo] = await Promise.all([fetchOutages(), fetchSiteInfo(siteName)]);
 
         const filteredOutages = outages
             .filter(o => new Date(o.begin) >= new Date("2022-01-01T00:00:00.000Z"));
@@ -44,10 +44,15 @@ export async function main() {
             return { ...outage, name: matchingDevice?.name };
         });
 
-        const postResult = await post("site-outages/norwich-pear-tree", outagesToReport);
+        const postResult = await post(`site-outages/${siteName}`, outagesToReport);
     } catch (error) {
         logger.error(`An error occurred in main function: ${error}`);
     }
 }
 
-main();
+const siteName = process.argv[2];
+if (!siteName) {
+    logger.error(`Please provide a site name as an argument.`);
+    process.exit(1);
+}
+main(siteName);
