@@ -45,6 +45,7 @@ export async function main(siteName: string) {
         });
 
         const postResult = await post(`site-outages/${siteName}`, outagesToReport);
+        logger.info(`Post result: ${postResult}`);
     } catch (error) {
         logger.error(`An error occurred in main function: ${error}`);
     }
